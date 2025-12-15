@@ -1,15 +1,32 @@
 {
   "compilerOptions": {
+    /* Language and environment */
     "target": "ES2020",
+    "lib": ["ES2020"],
+    
+    /* Module system (IMPORTANT for Render) */
     "module": "CommonJS",
-    "outDir": "dist",
-    "rootDir": ".",
-    "strict": true,
+    "moduleResolution": "node",
+
+    /* Paths */
+    "rootDir": "./",
+    "outDir": "./dist",
+
+    /* Interop & compatibility */
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Type safety */
+    "strict": true,
     "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Node types (CRITICAL FIX) */
     "types": ["node"]
   },
+
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
+
 
