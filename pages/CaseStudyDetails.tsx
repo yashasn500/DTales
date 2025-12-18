@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { apiFetch } from "../src/lib/api";
+import CoverImage from "../components/CoverImage";
 
 type CaseStudy = {
   id: string;
@@ -83,15 +84,7 @@ const CaseStudyDetails: React.FC = () => {
             </header>
 
             {/* Cover Image */}
-            {caseStudy.cover_image_url && (
-              <div className="mb-10 rounded-3xl overflow-hidden bg-gray-100">
-                <img
-                  src={caseStudy.cover_image_url}
-                  alt={caseStudy.title}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-            )}
+            <CoverImage src={caseStudy.cover_image_url} alt={caseStudy.title} />
 
             {/* Content */}
             <div
