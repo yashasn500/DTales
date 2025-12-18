@@ -40,12 +40,45 @@ async function ensureUniqueSlug(baseSlug, excludeId = null) {
   }
 }
 
+function stripHtml(html) {
+  if (!html) return "";
+  return String(html).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function buildExcerpt(html, maxLen = 200) {
+  const text = stripHtml(html);
+  return text.length > maxLen ? text.slice(0, maxLen) : text;
+}
+
+function toBooleanStrict(value) {
+  return value === true; // only literal true is treated as true
+}
+
+function pickContentHtml(bodyContent) {
+  if (typeof bodyContent === "string") return bodyContent;
+  if (bodyContent && typeof bodyContent.html === "string") return bodyContent.html;
+  return "";
+}
+
+function pickCoverImage(body) {
+  return body.cover_image_url ?? body.cover_image ?? null;
+}
+
+function mapBlogRow(row) {
+  if (!row) return row;
+  return {
+    ...row,
+    cover_image_url: row.cover_image ?? null,
+    content: { html: row.content || "" },
+  };
+}
+
 router.get("/", async (_req, res) => {
   try {
     const { rows } = await pool.query(
       "SELECT * FROM blogs ORDER BY created_at DESC"
     );
-    res.json(rows);
+    res.json(rows.map(mapBlogRow));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch blogs" });
@@ -57,7 +90,7 @@ router.get("/public", async (_req, res) => {
     const { rows } = await pool.query(
       "SELECT * FROM blogs WHERE published = true ORDER BY created_at DESC"
     );
-    res.json(rows);
+    res.json(rows.map(mapBlogRow));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch public blogs" });
@@ -74,7 +107,7 @@ router.get("/:id", async (req, res) => {
     if (!rows.length) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    res.json(rows[0]);
+    res.json(mapBlogRow(rows[0]));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch blog" });
@@ -83,19 +116,29 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { title, slug, content, cover_image_url, published } = req.body;
-    
-    // Generate slug from title if not provided, or use provided slug
-    const baseSlug = slug || generateSlug(title);
+    const title = (req.body.title || "").toString().trim();
+    const contentHtml = pickContentHtml(req.body.content);
+    const coverImage = pickCoverImage(req.body);
+    const published = toBooleanStrict(req.body.published);
+
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+    if (!contentHtml) {
+      return res.status(400).json({ error: "Content HTML is required" });
+    }
+
+    const baseSlug = generateSlug(title);
     const uniqueSlug = await ensureUniqueSlug(baseSlug);
-    
+    const excerpt = buildExcerpt(contentHtml, 200);
+
     const { rows } = await pool.query(
-      `INSERT INTO blogs (title, slug, content, cover_image_url, published)
-       VALUES ($1,$2,$3,$4,$5)
+      `INSERT INTO blogs (title, slug, excerpt, content, cover_image, published)
+       VALUES ($1,$2,$3,$4,$5,$6)
        RETURNING *`,
-      [title, uniqueSlug, content, cover_image_url, published]
+      [title, uniqueSlug, excerpt, contentHtml, coverImage, published]
     );
-    res.status(201).json(rows[0]);
+    res.status(201).json(mapBlogRow(rows[0]));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to create blog" });
@@ -105,28 +148,48 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, slug, content, cover_image_url, published } = req.body;
-    
-    // Generate slug from title if not provided, or use provided slug
-    const baseSlug = slug || generateSlug(title);
-    const uniqueSlug = await ensureUniqueSlug(baseSlug, id);
-    
+
+    // Load existing to preserve slug and fill defaults defensively
+    const existing = await pool.query("SELECT * FROM blogs WHERE id = $1", [id]);
+    if (!existing.rows.length) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+    const current = existing.rows[0];
+
+    const title = ((req.body.title ?? current.title) || "").toString().trim();
+    const contentHtmlRaw = pickContentHtml(req.body.content);
+    const contentHtml = contentHtmlRaw || current.content || "";
+    const coverImage = pickCoverImage(req.body);
+    const published = toBooleanStrict(req.body.published);
+
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+    if (!contentHtml) {
+      return res.status(400).json({ error: "Content HTML is required" });
+    }
+
+    const excerpt = buildExcerpt(contentHtml, 200);
+    // Preserve existing slug; only generate if it's unexpectedly missing
+    const slugToUse = current.slug || (await ensureUniqueSlug(generateSlug(title), id));
+
     const { rows } = await pool.query(
       `UPDATE blogs SET
        title = $1,
        slug = $2,
-       content = $3,
-       cover_image_url = $4,
-       published = $5,
+       excerpt = $3,
+       content = $4,
+       cover_image = $5,
+       published = $6,
        updated_at = NOW()
-       WHERE id = $6
+       WHERE id = $7
        RETURNING *`,
-      [title, uniqueSlug, content, cover_image_url, published, id]
+      [title, slugToUse, excerpt, contentHtml, coverImage ?? current.cover_image ?? null, published, id]
     );
     if (!rows.length) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    res.json(rows[0]);
+    res.json(mapBlogRow(rows[0]));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to update blog" });
