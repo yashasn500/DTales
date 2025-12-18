@@ -28,7 +28,6 @@ const AdminCaseStudyEditor: React.FC = () => {
   const isEdit = Boolean(id);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [published, setPublished] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(isEdit);
@@ -53,10 +52,9 @@ const AdminCaseStudyEditor: React.FC = () => {
 
     const loadCaseStudy = async () => {
       try {
-        const data = await apiFetch<{ title: string; slug: string; published: boolean; content?: { html?: string } }>(`/api/case-studies/${id}`);
+        const data = await apiFetch<{ title: string; slug: string; content?: { html?: string } }>(`/api/case-studies/${id}`);
         setTitle(data.title || "");
         setSlug(data.slug || "");
-        setPublished(!!data.published);
         editor.commands.setContent(data?.content?.html || "");
       } catch (e: any) {
         setError(e.message || "Failed to load case study");
@@ -84,7 +82,7 @@ const AdminCaseStudyEditor: React.FC = () => {
     editor?.chain().focus().setImage({ src: url }).run();
   };
 
-  const handleSave = async () => {
+  const handleSaveDraft = async () => {
     if (!editor) return;
     setSaving(true);
     setError(null);
@@ -94,7 +92,7 @@ const AdminCaseStudyEditor: React.FC = () => {
         title,
         slug,
         content: { html: editorHTML },
-        published,
+        published: false,
       };
 
       if (isEdit && id) {
@@ -102,7 +100,33 @@ const AdminCaseStudyEditor: React.FC = () => {
       } else {
         await apiPost("/api/case-studies", payload);
       }
-      navigate("/admin/case-studies/manage");
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!editor) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const editorHTML = editor.getHTML();
+      const payload = {
+        title,
+        slug,
+        content: { html: editorHTML },
+        published: true,
+      };
+
+      if (isEdit && id) {
+        await apiPut(`/api/case-studies/${id}`, payload);
+      } else {
+        await apiPost("/api/case-studies", payload);
+      }
+
+      navigate("/admin/dashboard");
     } catch (e: any) {
       setError(e.message || "An unexpected error occurred");
     } finally {
@@ -142,14 +166,6 @@ const AdminCaseStudyEditor: React.FC = () => {
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
           />
-          <label className="flex items-center gap-2 text-white">
-            <input
-              type="checkbox"
-              checked={published}
-              onChange={(e) => setPublished(e.target.checked)}
-            />
-            Publish
-          </label>
         </div>
 
         <div className="bg-white/10 border border-white/10 backdrop-blur-lg rounded-xl">
@@ -247,13 +263,22 @@ const AdminCaseStudyEditor: React.FC = () => {
           <EditorContent editor={editor} />
         </div>
 
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="mt-6 px-6 py-3 rounded-xl bg-[#0020BF] text-white font-semibold disabled:opacity-60"
-        >
-          {saving ? "Saving…" : "Save Case Study"}
-        </button>
+        <div className="mt-6 flex gap-4 justify-end">
+          <button
+            onClick={handleSaveDraft}
+            disabled={saving}
+            className="px-6 py-3 rounded-xl bg-white/10 border border-white/10 text-white font-semibold hover:bg-white/20 disabled:opacity-60 transition-all"
+          >
+            {saving ? "Saving…" : "Save Draft"}
+          </button>
+          <button
+            onClick={handlePublish}
+            disabled={saving}
+            className="px-6 py-3 rounded-xl bg-[#0020BF] text-white font-semibold hover:bg-[#0A2CFF] disabled:opacity-60 transition-all"
+          >
+            {saving ? "Publishing…" : "Publish"}
+          </button>
+        </div>
       </div>
     </div>
   );
