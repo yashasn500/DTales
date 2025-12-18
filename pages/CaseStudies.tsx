@@ -78,17 +78,15 @@ const CaseStudies: React.FC = () => {
 							<Layers size={26} />
 						</div>
 
-						{caseStudy.cover_image_url && (
-							<Link to={`/case-studies/${caseStudy.id}`}>
-								<img
-									src={caseStudy.cover_image_url}
-									alt={caseStudy.title}
-									className="w-full h-44 object-cover rounded-2xl"
-								/>
-							</Link>
-						)}
-
+					{caseStudy.cover_image_url && (
 						<Link to={`/case-studies/${caseStudy.id}`}>
+							<img
+								src={caseStudy.cover_image_url}
+								alt={caseStudy.title}
+								className="w-full h-auto object-contain rounded-2xl bg-gray-50"
+							/>
+						</Link>
+					)}						<Link to={`/case-studies/${caseStudy.id}`}>
 							<h2 className="text-2xl font-bold text-black leading-snug">
 								{caseStudy.title}
 							</h2>

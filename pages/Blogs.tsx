@@ -65,9 +65,9 @@ const Blogs: React.FC = () => {
 				<div className="text-center text-gray-500">No blogs found.</div>
 			)}
 
-			<div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-				{blogs.map((blog, index) => (
-					<motion.div
+		<div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+			{blogs.map((blog) => (
+				<motion.div
 						key={blog.id}
 						className="bg-[#F5F5F7] p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all border border-gray-200 flex flex-col gap-4"
 						initial={{ opacity: 0, y: 30 }}
@@ -78,17 +78,15 @@ const Blogs: React.FC = () => {
 							<FileText size={26} />
 						</div>
 
-						{blog.cover_image_url && (
-							<Link to={`/blogs/${blog.id}`}>
-								<img
-									src={blog.cover_image_url}
-									alt={blog.title}
-									className="w-full h-44 object-cover rounded-2xl"
-								/>
-							</Link>
-						)}
-
+					{blog.cover_image_url && (
 						<Link to={`/blogs/${blog.id}`}>
+							<img
+								src={blog.cover_image_url}
+								alt={blog.title}
+								className="w-full h-auto object-contain rounded-2xl bg-gray-50"
+							/>
+						</Link>
+					)}						<Link to={`/blogs/${blog.id}`}>
 							<h2 className="text-2xl font-bold text-black leading-snug">
 								{blog.title}
 							</h2>
