@@ -9,6 +9,7 @@ import Services from './pages/Services';
 import Blogs from './pages/Blogs';
 import BlogDetails from './pages/BlogDetails';
 import CaseStudies from './pages/CaseStudies';
+import CaseStudyDetails from './pages/CaseStudyDetails';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
@@ -46,6 +47,7 @@ const App: React.FC = () => {
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blogs/:id" element={<BlogDetails />} />
             <Route path="/case-studies" element={<CaseStudies />} />
+            <Route path="/case-studies/:id" element={<CaseStudyDetails />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin" element={<Login />} />
             <Route 

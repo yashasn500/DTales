@@ -28,6 +28,7 @@ const AdminCaseStudyEditor: React.FC = () => {
   const isEdit = Boolean(id);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(isEdit);
@@ -54,9 +55,10 @@ const AdminCaseStudyEditor: React.FC = () => {
 
     const loadCaseStudy = async () => {
       try {
-        const data = await apiFetch<{ title: string; slug: string; content?: { html?: string } }>(`/api/case-studies/${id}`);
+        const data = await apiFetch<{ title: string; slug: string; cover_image_url?: string | null; content?: { html?: string } }>(`/api/case-studies/${id}`);
         setTitle(data.title || "");
         setSlug(data.slug || "");
+        setCoverImageUrl(data.cover_image_url || "");
         editor.commands.setContent(data?.content?.html || "");
       } catch (e: any) {
         setError(e.message || "Failed to load case study");
@@ -93,6 +95,7 @@ const AdminCaseStudyEditor: React.FC = () => {
       const payload = {
         title,
         slug,
+        cover_image_url: coverImageUrl,
         content: { html: editorHTML },
         published: false,
       };
@@ -118,6 +121,7 @@ const AdminCaseStudyEditor: React.FC = () => {
       const payload = {
         title,
         slug,
+        cover_image_url: coverImageUrl,
         content: { html: editorHTML },
         published: true,
       };
@@ -167,6 +171,12 @@ const AdminCaseStudyEditor: React.FC = () => {
             placeholder="Slug"
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
+          />
+          <input
+            className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white"
+            placeholder="Cover Image URL"
+            value={coverImageUrl}
+            onChange={(e) => setCoverImageUrl(e.target.value)}
           />
         </div>
 

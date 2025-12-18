@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Layers, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { apiFetch } from "../src/lib/api";
 
 type CaseStudy = {
@@ -93,9 +94,9 @@ const CaseStudies: React.FC = () => {
                   {c.client}
                 </span>
               )}
-              <button className="text-dtales-navy font-semibold hover:underline flex items-center gap-2">
+              <Link to={`/case-studies/${c.id}`} className="text-dtales-navy font-semibold hover:underline flex items-center gap-2">
                 Explore <ArrowRight size={18} />
-              </button>
+              </Link>
             </div>
           </motion.div>
         ))}
