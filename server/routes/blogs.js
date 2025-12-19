@@ -64,21 +64,16 @@ function pickCoverImage(body) {
   return body.cover_image_url ?? body.cover_image ?? null;
 }
 
-function mapBlogRow(row) {
-  if (!row) return row;
-  return {
-    ...row,
-    cover_image_url: row.cover_image ?? null,
-    content: { html: row.content || "" },
-  };
-}
-
 router.get("/", async (_req, res) => {
   try {
     const { rows } = await pool.query(
       "SELECT * FROM blogs ORDER BY created_at DESC"
     );
-    res.json(rows.map(mapBlogRow));
+    const mapped = rows.map((row) => ({
+      ...row,
+      cover_image_url: row.cover_image ?? null,
+    }));
+    res.json(mapped);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch blogs" });
@@ -90,7 +85,11 @@ router.get("/public", async (_req, res) => {
     const { rows } = await pool.query(
       "SELECT * FROM blogs WHERE published = true ORDER BY created_at DESC"
     );
-    res.json(rows.map(mapBlogRow));
+    const mapped = rows.map((row) => ({
+      ...row,
+      cover_image_url: row.cover_image ?? null,
+    }));
+    res.json(mapped);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch public blogs" });
@@ -107,7 +106,11 @@ router.get("/:id", async (req, res) => {
     if (!rows.length) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    res.json(mapBlogRow(rows[0]));
+    const row = rows[0];
+    res.json({
+      ...row,
+      cover_image_url: row.cover_image ?? null,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch blog" });
@@ -138,7 +141,11 @@ router.post("/", async (req, res) => {
        RETURNING *`,
       [title, uniqueSlug, excerpt, contentHtml, coverImage, published]
     );
-    res.status(201).json(mapBlogRow(rows[0]));
+    const row = rows[0];
+    res.status(201).json({
+      ...row,
+      cover_image_url: row.cover_image ?? null,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to create blog" });
@@ -190,7 +197,11 @@ router.put("/:id", async (req, res) => {
     if (!rows.length) {
       return res.status(404).json({ error: "Blog not found" });
     }
-    res.json(mapBlogRow(rows[0]));
+    const row = rows[0];
+    res.json({
+      ...row,
+      cover_image_url: row.cover_image ?? null,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to update blog" });

@@ -14,6 +14,7 @@ const AdminCaseStudyEditor: React.FC = () => {
   const [title, setTitle] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [contentFile, setContentFile] = useState<File | null>(null);
+  const [docxContent, setDocxContent] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(isEdit);
@@ -51,21 +52,27 @@ const AdminCaseStudyEditor: React.FC = () => {
     }
   };
 
-  const handleDocxFileChange = (file: File | null) => {
+  const handleDocxFileChange = async (file: File | null) => {
     if (!file) return;
     if (!file.name.endsWith(".docx")) {
       setError("Only .docx files are allowed");
       return;
     }
-    setContentFile(file);
     setError(null);
+    setContentFile(file);
+    setDocxContent(null);
+
+    const html = await uploadDocxAndGetContent(file);
+    if (html) {
+      setDocxContent(html);
+    } else {
+      setContentFile(null);
+    }
   };
 
-  const uploadDocxAndGetContent = async (): Promise<string | null> => {
-    if (!contentFile) return null;
-
+  const uploadDocxAndGetContent = async (file: File): Promise<string | null> => {
     const formData = new FormData();
-    formData.append("contentFile", contentFile);
+    formData.append("contentFile", file);
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || "https://dtales-backend.onrender.com"}/api/uploads/docx`, {
@@ -102,14 +109,9 @@ const AdminCaseStudyEditor: React.FC = () => {
         published: false,
       };
 
-      // Only include content if a new .docx file was uploaded
-      if (contentFile) {
-        const htmlContent = await uploadDocxAndGetContent();
-        if (!htmlContent) {
-          setSaving(false);
-          return;
-        }
-        payload.content = htmlContent; // Plain HTML string, NOT { html: ... }
+      // Only include content if we already converted a .docx file
+      if (docxContent) {
+        payload.content = docxContent; // Plain HTML string, NOT { html: ... }
       } else if (!isEdit) {
         // For new case studies, content is required
         setError("Please upload a .docx file with your content");
@@ -145,14 +147,9 @@ const AdminCaseStudyEditor: React.FC = () => {
         published: true,
       };
 
-      // Only include content if a new .docx file was uploaded
-      if (contentFile) {
-        const htmlContent = await uploadDocxAndGetContent();
-        if (!htmlContent) {
-          setSaving(false);
-          return;
-        }
-        payload.content = htmlContent; // Plain HTML string, NOT { html: ... }
+      // Only include content if we already converted a .docx file
+      if (docxContent) {
+        payload.content = docxContent; // Plain HTML string, NOT { html: ... }
       } else if (!isEdit) {
         // For new case studies, content is required
         setError("Please upload a .docx file with your content");
@@ -264,7 +261,10 @@ const AdminCaseStudyEditor: React.FC = () => {
                   <span className="text-gray-300">{contentFile.name}</span>
                   <button
                     type="button"
-                    onClick={() => setContentFile(null)}
+                    onClick={() => {
+                      setContentFile(null);
+                      setDocxContent(null);
+                    }}
                     className="text-red-400 hover:text-red-300"
                   >
                     <X size={18} />

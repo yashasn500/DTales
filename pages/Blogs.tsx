@@ -9,7 +9,7 @@ type Blog = {
 	title: string;
 	slug: string;
 	cover_image_url?: string | null;
-	content?: { html?: string };
+	content?: string;
 	published: boolean;
 	created_at: string;
 };
@@ -97,7 +97,7 @@ const Blogs: React.FC = () => {
 						</p>
 
 						<p className="text-gray-600 text-lg leading-relaxed">
-							{getExcerpt(blog.content?.html)}
+							{getExcerpt(blog.content)}
 						</p>
 
 						<div className="flex items-center justify-between mt-auto pt-2">

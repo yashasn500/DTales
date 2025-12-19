@@ -9,11 +9,15 @@ const router = Router();
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, "../uploads");
 const docsDir = path.join(__dirname, "../uploads/docs");
+const imagesDir = path.join(__dirname, "../uploads/images");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 if (!fs.existsSync(docsDir)) {
   fs.mkdirSync(docsDir, { recursive: true });
+}
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
 }
 
 // Configure multer storage
@@ -135,13 +139,13 @@ router.post("/docx", (req, res) => {
             const timestamp = Date.now();
             const extension = image.contentType.split("/")[1] || "png";
             const imageName = `${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
-            const imagePath = path.join(uploadsDir, imageName);
+            const imagePath = path.join(imagesDir, imageName);
 
-            // Save image to uploads directory
+            // Save image to uploads/images directory
             fs.writeFileSync(imagePath, buffer);
 
             // Return public URL for image
-            return { src: `/uploads/${imageName}` };
+            return { src: `/uploads/images/${imageName}` };
           }),
         }
       );

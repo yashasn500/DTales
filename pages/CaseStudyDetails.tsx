@@ -9,7 +9,7 @@ type CaseStudy = {
   id: string;
   title: string;
   cover_image_url?: string | null;
-  content?: { html?: string };
+  content?: string;
   created_at?: string;
 };
 
@@ -99,7 +99,7 @@ const CaseStudyDetails: React.FC = () => {
                 prose-img:rounded-2xl prose-img:shadow-md
                 prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-2 prose-code:py-1 prose-code:rounded
                 prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-2xl"
-              dangerouslySetInnerHTML={{ __html: caseStudy.content?.html || "" }}
+                dangerouslySetInnerHTML={{ __html: caseStudy.content || "" }}
             />
           </motion.article>
         )}
