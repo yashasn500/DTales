@@ -187,7 +187,8 @@ router.post("/docx", (req, res) => {
               return { src: url };
             } catch (imgErr) {
               console.error("❌ Failed to upload embedded image:", imgErr.message);
-              throw imgErr;
+              // Log and continue parsing without crashing; omit the image
+              return { src: "" };
             }
           }),
         }
