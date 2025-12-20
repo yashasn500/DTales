@@ -1,6 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const { configureCloudinary } = require("./config/cloudinary");
+
+// Validate and configure Cloudinary at startup
+try {
+  configureCloudinary();
+} catch (error) {
+  console.error("❌ STARTUP ERROR:", error.message);
+  process.exit(1);
+}
 
 const blogsRouter = require("./routes/blogs");
 const caseStudiesRouter = require("./routes/case-studies");

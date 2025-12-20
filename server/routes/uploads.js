@@ -1,16 +1,9 @@
 const { Router } = require("express");
 const multer = require("multer");
 const mammoth = require("mammoth");
-const { v2: cloudinary } = require("cloudinary");
+const { cloudinary } = require("../config/cloudinary");
 
 const router = Router();
-
-// Configure Cloudinary from environment
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 // Multer in-memory storage (no local disk)
 const memoryStorage = multer.memoryStorage();
@@ -52,12 +45,16 @@ router.post("/image", (req, res) => {
     }
 
     try {
+      if (!cloudinary.config().api_key) {
+        throw new Error("Cloudinary not configured");
+      }
+
       const stream = cloudinary.uploader.upload_stream(
         { folder: "dtales/images", resource_type: "image" },
         (error, result) => {
           if (error) {
             console.error("CLOUDINARY IMAGE ERROR:", error);
-            return res.status(500).json({ error: "Failed to upload image" });
+            return res.status(500).json({ error: "Cloudinary upload failed: " + error.message });
           }
           return res.status(201).json({ url: result.secure_url });
         }
@@ -65,7 +62,7 @@ router.post("/image", (req, res) => {
       stream.end(req.file.buffer);
     } catch (e) {
       console.error("CLOUDINARY IMAGE EXCEPTION:", e);
-      return res.status(500).json({ error: "Failed to upload image" });
+      return res.status(500).json({ error: e.message || "Failed to upload image" });
     }
   });
 });
@@ -111,6 +108,10 @@ router.post("/docx", (req, res) => {
     }
 
     try {
+      if (!cloudinary.config().api_key) {
+        throw new Error("Cloudinary not configured");
+      }
+
       // Store DOCX on Cloudinary (raw)
       await new Promise((resolve, reject) => {
         const docxStream = cloudinary.uploader.upload_stream(
