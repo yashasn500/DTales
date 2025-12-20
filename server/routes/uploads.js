@@ -21,13 +21,22 @@ const imageFileFilter = (req, file, cb) => {
   }
 };
 
-const uploadImage = multer({
+// Unified multer with fields for image and docx (supports legacy 'contentFile')
+const uploadFields = multer({
   storage: memoryStorage,
-  fileFilter: imageFileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB max
+    fileSize: 50 * 1024 * 1024, // 50MB max (covers images and docx)
   },
-});
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === "image") return imageFileFilter(req, file, cb);
+    if (file.fieldname === "docx" || file.fieldname === "contentFile") return docxFileFilter(req, file, cb);
+    cb(new Error("Unsupported field name"), false);
+  },
+}).fields([
+  { name: "image", maxCount: 1 },
+  { name: "docx", maxCount: 1 },
+  { name: "contentFile", maxCount: 1 },
+]);
 
 /**
  * POST /api/uploads/image
@@ -44,9 +53,7 @@ const uploadImage = multer({
  *   { message: "error description", source: "image_upload" }
  */
 router.post("/image", (req, res) => {
-  const uploadHandler = uploadImage.single("image");
-
-  uploadHandler(req, res, async (err) => {
+  uploadFields(req, res, async (err) => {
     if (err) {
       console.error("❌ IMAGE UPLOAD ERROR:", err.message);
       return res.status(400).json({
@@ -55,7 +62,8 @@ router.post("/image", (req, res) => {
       });
     }
 
-    if (!req.file) {
+    const imageFile = req.files?.image?.[0];
+    if (!imageFile) {
       console.error("❌ IMAGE UPLOAD ERROR: No file provided");
       return res.status(400).json({
         message: "No image file provided",
@@ -82,7 +90,7 @@ router.post("/image", (req, res) => {
           return res.status(201).json({ url: result.secure_url });
         }
       );
-      stream.end(req.file.buffer);
+      stream.end(imageFile.buffer);
     } catch (e) {
       console.error("❌ IMAGE UPLOAD EXCEPTION:", e.message);
       return res.status(500).json({
@@ -109,13 +117,7 @@ const docxFileFilter = (req, file, cb) => {
   }
 };
 
-const uploadDocxMulter = multer({
-  storage: memoryStorage,
-  fileFilter: docxFileFilter,
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB max
-  },
-});
+// (Handled by unified uploadFields above)
 
 /**
  * POST /api/uploads/docx
@@ -138,9 +140,7 @@ const uploadDocxMulter = multer({
  *   { message: "error description", source: "docx_parse" }
  */
 router.post("/docx", (req, res) => {
-  const uploadHandler = uploadDocxMulter.single("contentFile");
-
-  uploadHandler(req, res, async (err) => {
+  uploadFields(req, res, async (err) => {
     if (err) {
       console.error("❌ DOCX UPLOAD ERROR:", err.message);
       return res.status(400).json({
@@ -149,10 +149,11 @@ router.post("/docx", (req, res) => {
       });
     }
 
-    if (!req.file) {
-      console.error("❌ DOCX UPLOAD ERROR: No file provided");
+    const docxFile = req.files?.docx?.[0] || req.files?.contentFile?.[0];
+    if (!docxFile) {
+      console.error("❌ DOCX UPLOAD ERROR: DOCX file missing");
       return res.status(400).json({
-        message: "No .docx file provided",
+        message: "DOCX file missing",
         source: "docx_parse",
       });
     }
@@ -167,7 +168,7 @@ router.post("/docx", (req, res) => {
       // Parse .docx buffer to HTML with image handling
       // Images are uploaded to Cloudinary; non-image content is extracted
       const result = await mammoth.convertToHtml(
-        { arrayBuffer: req.file.buffer },
+        { buffer: docxFile.buffer },
         {
           convertImage: mammoth.images.imgElement(async (image) => {
             try {

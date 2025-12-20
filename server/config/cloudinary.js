@@ -16,7 +16,7 @@ function configureCloudinary() {
     api_secret: CLOUDINARY_API_SECRET,
   });
 
-  console.log("✅ Cloudinary configured successfully");
+  console.log(`✅ Cloudinary configured for: ${CLOUDINARY_CLOUD_NAME}`);
 }
 
 module.exports = { cloudinary, configureCloudinary };
