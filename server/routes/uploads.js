@@ -1,15 +1,49 @@
 const { Router } = require("express");
 const multer = require("multer");
 const mammoth = require("mammoth");
-const cloudinary = require("../config/cloudinary");
+const supabase = require("../config/supabase");
 
 const router = Router();
 
 // Multer in-memory storage (no local disk)
 const memoryStorage = multer.memoryStorage();
 
+const SUPABASE_BUCKET = process.env.SUPABASE_BUCKET;
+
+// Helper to upload a buffer to Supabase Storage and return its public URL
+const uploadToSupabase = async (filename, buffer, contentType) => {
+  if (!SUPABASE_BUCKET) {
+    throw new Error("Supabase bucket is not configured");
+  }
+
+  const path = `uploads/${Date.now()}-${Math.random().toString(16).slice(2)}-${filename}`;
+
+  const { error: uploadError } = await supabase
+    .storage
+    .from(SUPABASE_BUCKET)
+    .upload(path, buffer, {
+      contentType,
+      upsert: false,
+    });
+
+  if (uploadError) {
+    throw new Error(`Supabase upload failed: ${uploadError.message}`);
+  }
+
+  const { data: publicData, error: publicError } = supabase
+    .storage
+    .from(SUPABASE_BUCKET)
+    .getPublicUrl(path);
+
+  if (publicError) {
+    throw new Error(`Supabase public URL failed: ${publicError.message}`);
+  }
+
+  return publicData.publicUrl;
+};
+
 // ============================================================================
-// IMAGE UPLOAD HANDLER
+// FILE FILTERS
 // ============================================================================
 
 const imageFileFilter = (req, file, cb) => {
@@ -18,6 +52,18 @@ const imageFileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(new Error("Only JPEG, PNG, and WebP images are allowed"), false);
+  }
+};
+
+const docxFileFilter = (req, file, cb) => {
+  const allowedMimes = [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword",
+  ];
+  if (allowedMimes.includes(file.mimetype) || file.originalname.endsWith(".docx")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only .docx files are allowed"), false);
   }
 };
 
@@ -41,13 +87,13 @@ const uploadFields = multer({
 /**
  * POST /api/uploads/image
  *
- * Upload a single image file to Cloudinary.
+ * Upload a single image file to Supabase Storage.
  * 
  * Request:
  *   - multipart/form-data with field "image"
  *
  * Response (201):
- *   { url: "https://res.cloudinary.com/..." }
+ *   { url: "https://<supabase-public-url>/..." }
  *
  * Error Response (400 or 500):
  *   { message: "error description", source: "image_upload" }
@@ -72,25 +118,9 @@ router.post("/image", (req, res) => {
     }
 
     try {
-      if (!cloudinary.config().api_key) {
-        throw new Error("Cloudinary is not configured");
-      }
-
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "dtales/images", resource_type: "image" },
-        (error, result) => {
-          if (error) {
-            console.error("❌ CLOUDINARY IMAGE ERROR:", error.message);
-            return res.status(500).json({
-              message: `Cloudinary upload failed: ${error.message}`,
-              source: "image_upload",
-            });
-          }
-          console.log("✅ Image uploaded successfully:", result.secure_url);
-          return res.status(201).json({ url: result.secure_url });
-        }
-      );
-      stream.end(imageFile.buffer);
+      const url = await uploadToSupabase(imageFile.originalname, imageFile.buffer, imageFile.mimetype || "application/octet-stream");
+      console.log("✅ Image uploaded to Supabase:", url);
+      return res.status(201).json({ url });
     } catch (e) {
       console.error("❌ IMAGE UPLOAD EXCEPTION:", e.message);
       return res.status(500).json({
@@ -105,18 +135,6 @@ router.post("/image", (req, res) => {
 // DOCX UPLOAD HANDLER
 // ============================================================================
 
-const docxFileFilter = (req, file, cb) => {
-  const allowedMimes = [
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/msword",
-  ];
-  if (allowedMimes.includes(file.mimetype) || file.originalname.endsWith(".docx")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only .docx files are allowed"), false);
-  }
-};
-
 // (Handled by unified uploadFields above)
 
 /**
@@ -127,14 +145,14 @@ const docxFileFilter = (req, file, cb) => {
  * Flow:
  *   1. Accept DOCX via multer memory storage
  *   2. Parse DOCX → HTML using Mammoth
- *   3. Upload images embedded in DOCX to Cloudinary
- *   4. Return clean HTML with Cloudinary image URLs
+ *   3. Upload images embedded in DOCX to Supabase
+ *   4. Return clean HTML with Supabase image URLs
  *
  * Request:
  *   - multipart/form-data with field "contentFile"
  *
  * Response (200):
- *   { html: "<html content with Cloudinary image URLs>", images: ["url1", "url2"] }
+ *   { html: "<html content with Supabase image URLs>", images: ["url1", "url2"] }
  *
  * Error Response (400 or 500):
  *   { message: "error description", source: "docx_parse" }
@@ -159,30 +177,21 @@ router.post("/docx", (req, res) => {
     }
 
     try {
-      if (!cloudinary.config().api_key) {
-        throw new Error("Cloudinary is not configured");
-      }
-
       const uploadedImages = [];
 
       // Parse .docx buffer to HTML with image handling
-      // Images are uploaded to Cloudinary; non-image content is extracted
+      // Images are uploaded to Supabase; non-image content is extracted
       const result = await mammoth.convertToHtml(
         { buffer: docxFile.buffer },
         {
           convertImage: mammoth.images.imgElement(async (image) => {
             try {
               const buffer = await image.read();
-              const url = await new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream(
-                  { folder: "dtales/docs/images", resource_type: "image" },
-                  (error, res) => {
-                    if (error) return reject(error);
-                    resolve(res.secure_url);
-                  }
-                );
-                stream.end(buffer);
-              });
+              const url = await uploadToSupabase(
+                `docx-embedded-${Date.now()}.png`,
+                buffer,
+                image.contentType || "image/png"
+              );
               uploadedImages.push(url);
               return { src: url };
             } catch (imgErr) {

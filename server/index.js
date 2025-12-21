@@ -3,17 +3,12 @@ const cors = require("cors");
 const path = require("path");
 
 // ============================================================================
-// Initialize Cloudinary (will throw if env vars missing)
-// ============================================================================
-require("./config/cloudinary");
-
-// ============================================================================
 // FAIL-FAST: Validate all required environment variables at startup
 // ============================================================================
 const requiredEnv = [
-  "CLOUDINARY_CLOUD_NAME",
-  "CLOUDINARY_API_KEY",
-  "CLOUDINARY_API_SECRET",
+  "SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "SUPABASE_BUCKET",
   "DATABASE_URL",
 ];
 
@@ -29,6 +24,9 @@ if (missingVars.length > 0) {
 }
 
 console.log("✅ Environment variables validated");
+
+// Initialize Supabase once (will throw if misconfigured)
+require("./config/supabase");
 
 const blogsRouter = require("./routes/blogs");
 const caseStudiesRouter = require("./routes/case-studies");
