@@ -42,7 +42,6 @@ async function uploadImageToSupabase(buffer, filename, mimeType) {
     .from(SUPABASE_BUCKET)
     .getPublicUrl(filePath);
 
-  console.log("✅ Supabase upload successful:", data.publicUrl);
   return data.publicUrl;
 }
 

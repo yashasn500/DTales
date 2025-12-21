@@ -14,6 +14,6 @@ const supabase = createClient(
   }
 );
 
-console.log("✅ Supabase configured successfully");
+console.log("✅ Supabase configured (lazy mode - no network calls at startup)");
 
 module.exports = supabase;

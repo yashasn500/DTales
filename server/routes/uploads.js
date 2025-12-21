@@ -89,10 +89,9 @@ router.post("/image", (req, res) => {
         imageFile.originalname,
         imageFile.mimetype
       );
-      console.log("✅ Image uploaded to Supabase:", url);
       return res.status(201).json({ url });
     } catch (e) {
-      console.error("❌ IMAGE UPLOAD EXCEPTION:", e.message);
+      console.error("❌ Supabase upload failed:", e.message);
       return res.status(500).json({
         message: e.message || "Failed to upload image",
         source: "image_upload",
@@ -166,18 +165,17 @@ router.post("/docx", (req, res) => {
               return { src: url };
             } catch (imgErr) {
               console.error("❌ Failed to upload embedded image:", imgErr.message);
-              // Log and continue parsing without crashing; omit the image
-              return { src: "" };
+              // Log awarn("⚠️ Skipping embedded image upload:", imgErr.message);
             }
           }),
         }
       );
 
       console.log(`✅ DOCX parsed successfully. Uploaded ${uploadedImages.length} embedded images`);
+      return res.status(200).jso. Uploaded ${uploadedImages.length} embedded images to Supabase`);
       return res.status(200).json({ html: result.value, images: uploadedImages });
     } catch (parseErr) {
-      console.error("❌ DOCX PARSE ERROR:", parseErr.message);
-      return res.status(500).json({
+      console.error("❌ DOCX parse error
         message: `Failed to parse .docx file: ${parseErr.message}`,
         source: "docx_parse",
       });
