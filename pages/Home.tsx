@@ -117,8 +117,8 @@ const Home: React.FC = () => {
              onClick={() => navigate('/services')}
            >
               <div>
-                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8">
-                  <Database size={28} />
+                <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-8">
+                  <img src="/icon1.png" alt="Content icon" className="w-7 h-7 object-contain" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Content</h3>
                 <p className="text-lg text-gray-500 leading-relaxed">
@@ -142,8 +142,8 @@ const Home: React.FC = () => {
              onClick={() => navigate('/services')}
            >
               <div>
-                <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-8">
-                  <FileText size={28} />
+                <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-8">
+                  <img src="/icon2.png" alt="Creatives icon" className="w-7 h-7 object-contain" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Creatives</h3>
                 <p className="text-lg text-gray-500 leading-relaxed">
@@ -167,8 +167,8 @@ const Home: React.FC = () => {
              onClick={() => navigate('/services')}
            >
               <div>
-                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8">
-                  <Database size={28} />
+                <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-8">
+                  <img src="/icon3.png" alt="Technology icon" className="w-7 h-7 object-contain" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Technology</h3>
                 <p className="text-lg text-gray-500 leading-relaxed">

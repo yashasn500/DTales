@@ -33,9 +33,7 @@ const Team: React.FC = () => {
       <section className="py-24 px-6 bg-[#F5F5F7]">
         <div className="max-w-7xl mx-auto space-y-24">
           {TEAM_MEMBERS.map((member, index) => {
-            const isDesigner = member.role === 'Creative Designer' || member.name.toLowerCase() === 'yashas';
-            const designerBio =
-              "I’m a graphic designer passionate about building modern brands through impactful visuals and clean design. I work closely with startups and creators to turn ideas into engaging branding and digital content that feels fresh, authentic, and effective.";
+            const isYashas = member.name.toLowerCase() === 'yashas niranjana';
             return (
               <motion.div
                 key={member.name}
@@ -49,7 +47,7 @@ const Team: React.FC = () => {
                 <div className="w-full md:w-1/2">
                   <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
                     <img 
-                      src={isDesigner ? "/yash.png" : member.image}
+                      src={member.image}
                       alt={member.name}
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
@@ -64,11 +62,11 @@ const Team: React.FC = () => {
                   <h2 className="text-4xl md:text-6xl font-bold mb-6 text-dtales-navy">{member.name}</h2>
                   <div className="w-20 h-1 bg-blue-500 mb-8"></div>
                   <p className="text-xl text-gray-600 leading-relaxed mb-10">
-                    {isDesigner ? designerBio : member.bio}
+                    {member.bio}
                   </p>
                   
                   <div className="flex gap-6">
-                    {isDesigner ? (
+                    {isYashas ? (
                       <>
                         <a
                           href="https://www.linkedin.com/in/yash017?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
@@ -79,22 +77,47 @@ const Team: React.FC = () => {
                           <Linkedin size={24} /> <span className="group-hover:underline">LinkedIn</span>
                         </a>
                         <a
-                          href="mailto:yashasn@dtales.tech"
+                          href="mailto:contact@dtales.tech"
                           className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group"
                         >
                           <Mail size={24} /> <span className="group-hover:underline">Get in touch</span>
                         </a>
                       </>
-                    ) : (
+                    ) : member.name === "Bindu Mohan" ? (
                       <>
-                        <a href="#" className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group">
+                        <a
+                          href="https://www.linkedin.com/in/bindu-mohan-54201438/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group"
+                        >
                           <Linkedin size={24} /> <span className="group-hover:underline">LinkedIn</span>
                         </a>
-                        <a href="#" className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group">
+                        <a
+                          href="mailto:contact@dtales.tech"
+                          className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group"
+                        >
                           <Mail size={24} /> <span className="group-hover:underline">Get in touch</span>
                         </a>
                       </>
-                    )}
+                    ) : member.name === "Sneha Peri" ? (
+                      <>
+                        <a
+                          href="https://www.linkedin.com/in/snehaperi/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group"
+                        >
+                          <Linkedin size={24} /> <span className="group-hover:underline">LinkedIn</span>
+                        </a>
+                        <a
+                          href="mailto:contact@dtales.tech"
+                          className="flex items-center gap-2 text-lg font-semibold text-black hover:text-blue-600 transition-colors group"
+                        >
+                          <Mail size={24} /> <span className="group-hover:underline">Get in touch</span>
+                        </a>
+                      </>
+                    ) : null}
                   </div>
                 </div>
               </motion.div>
@@ -111,7 +134,7 @@ const Team: React.FC = () => {
             <p className="text-xl text-gray-400 mb-12">
                 If you are passionate about storytelling and technology, we want to hear from you.
             </p>
-            <a href="#" className="inline-flex items-center gap-3 bg-white text-black px-10 py-4 rounded-full text-lg font-bold hover:bg-gray-200 transition-colors">
+            <a href="mailto:career@dtales.tech" className="inline-flex items-center gap-3 bg-white text-black px-10 py-4 rounded-full text-lg font-bold hover:bg-gray-200 transition-colors">
                 View Open Positions <ArrowRight />
             </a>
         </div>

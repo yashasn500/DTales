@@ -113,7 +113,13 @@ const Services: React.FC = () => {
                         title="Custom Solutions"
                         description="Tailored documentation solutions designed specifically for your unique product requirements."
                         delay={0.5}
-                        fullWidth
+                    />
+                    <ServiceCard 
+                        iconImg="/icon4.png"
+                        iconAlt="Social Media Management icon"
+                        title="Social Media Management"
+                        description="Creating and curating technical, platform-optimized content for LinkedIn and Instagram."
+                        delay={0.6}
                     />
                 </div>
             </div>
@@ -206,6 +212,8 @@ const Services: React.FC = () => {
 // Helper Component for Cards
 const ServiceCard = ({ 
     icon, 
+    iconImg,
+    iconAlt,
     title, 
     description, 
     delay, 
@@ -213,7 +221,9 @@ const ServiceCard = ({
     bg = "bg-white",
     iconColor = "text-black"
 }: { 
-    icon: React.ReactNode, 
+    icon?: React.ReactNode, 
+    iconImg?: string,
+    iconAlt?: string,
     title: string, 
     description: string, 
     delay: number, 
@@ -229,8 +239,11 @@ const ServiceCard = ({
         transition={{ delay }}
     >
         <div className={`w-12 h-12 rounded-xl bg-gray-100/50 ${iconColor} flex items-center justify-center mb-6`}>
-            {/* Fix: Assert the type of the icon element to accept a 'size' prop when cloning. */}
-            {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 24 }) : icon}
+            {iconImg ? (
+                <img src={iconImg} alt={iconAlt} className="w-full h-full object-contain" />
+            ) : (
+                React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 24 }) : icon
+            )}
         </div>
         <h3 className="text-xl font-bold mb-3 text-black">{title}</h3>
         <p className="text-gray-500 leading-relaxed">

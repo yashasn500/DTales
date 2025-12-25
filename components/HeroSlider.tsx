@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Pause, Play } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HERO_SLIDES } from '../constants';
-import { TextColor } from './ui/text-color';
 
 // TODO: Replace HERO_SLIDES with API call when backend endpoint is ready
 // const slides = await apiFetch<HeroSlide[]>("/api/hero-slides");
@@ -94,7 +93,7 @@ const HeroSlider: React.FC = () => {
               className="overflow-hidden"
             >
                <h1 className="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tight text-white mb-6 drop-shadow-2xl">
-                <TextColor text={HERO_SLIDES[currentIndex].title} />
+                {HERO_SLIDES[currentIndex].title}
               </h1>
             </motion.div>
             

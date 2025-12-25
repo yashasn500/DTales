@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
             </Link>
 
             <p className="text-gray-400 max-w-md text-lg">
-              Transforming ideas into digital realities…
+              Technical Storytelling. Reimagined
             </p>
           </div>
 

@@ -73,7 +73,7 @@ const Testimonials: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <TextColor text="Testimonials" />
+            <TextColor text="Why DTALES Tech" />
           </motion.h2>
           <motion.p
             className="text-lg md:text-xl text-gray-600 leading-relaxed"
