@@ -66,32 +66,23 @@ const Testimonials: React.FC = () => {
     <section className="py-32 bg-[#F5F5F7] text-gray-800 overflow-hidden relative">
 
       <div className="relative z-10">
-        <div className="mb-20 text-center max-w-3xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-block mb-4 px-4 py-1.5 rounded-full border border-gray-200 bg-white text-sm font-medium text-dtales-navy shadow-sm"
-          >
-            Testimonials
-          </motion.div>
+        <div className="mb-20 text-center max-w-4xl mx-auto px-6">
           <motion.h2
-            className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-dtales-navy"
+            className="text-4xl md:text-6xl font-bold tracking-tight text-dtales-navy mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
           >
-            <TextColor text="Trusted by Tomorrow's Tech Leaders." />
+            <TextColor text="Testimonials" />
           </motion.h2>
           <motion.p
-             className="text-xl text-gray-600"
-             initial={{ opacity: 0 }}
-             whileInView={{ opacity: 1 }}
-             viewport={{ once: true }}
-             transition={{ delay: 0.2 }}
+            className="text-lg md:text-xl text-gray-600 leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
           >
-              Building the Future of Knowledge, Together
+            See how teams across industries describe their journey working with DTALES.
           </motion.p>
         </div>
 

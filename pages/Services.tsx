@@ -190,9 +190,13 @@ const Services: React.FC = () => {
             <p className="text-xl text-blue-200 mb-10">
                 Whether you need expert services or professional training, DTALES is your partner in excellence.
             </p>
-            <button className="bg-white text-dtales-navy px-10 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all shadow-lg hover:shadow-white/20">
-                Get in Touch
-            </button>
+                        <button
+                            className="bg-white text-dtales-navy px-10 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all shadow-lg hover:shadow-white/20"
+                            onClick={() => window.location.assign('https://dtales.tech/#/contact')}
+                            aria-label="Get in Touch"
+                        >
+                            Get in Touch
+                        </button>
         </div>
       </section>
     </div>

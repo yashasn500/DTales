@@ -5,39 +5,39 @@
 }
 
 @keyframes gradient-foreground-1 {
-  0% { color: #2563eb; }
-  50% { color: #7c3aed; }
-  100% { color: #0ea5e9; }
+  0% { color: #0024FF; }
+  50% { color: #001CC3; }
+  100% { color: #0024FF; }
 }
 
 @keyframes gradient-foreground-2 {
-  0% { color: #7c3aed; }
-  50% { color: #0ea5e9; }
-  100% { color: #2563eb; }
+  0% { color: #001CC3; }
+  50% { color: #0024FF; }
+  100% { color: #001CC3; }
 }
 
 @keyframes gradient-foreground-3 {
-  0% { color: #0ea5e9; }
-  50% { color: #2563eb; }
-  100% { color: #7c3aed; }
+  0% { color: #0024FF; }
+  50% { color: #001CC3; }
+  100% { color: #0024FF; }
 }
 
 @keyframes gradient-background-1 {
-  0% { color: #2563eb; opacity: 0.1; }
-  50% { color: #7c3aed; opacity: 0.15; }
-  100% { color: #0ea5e9; opacity: 0.1; }
+  0% { color: #0024FF; opacity: 0.1; }
+  50% { color: #001CC3; opacity: 0.15; }
+  100% { color: #0024FF; opacity: 0.1; }
 }
 
 @keyframes gradient-background-2 {
-  0% { color: #7c3aed; opacity: 0.1; }
-  50% { color: #0ea5e9; opacity: 0.15; }
-  100% { color: #2563eb; opacity: 0.1; }
+  0% { color: #001CC3; opacity: 0.1; }
+  50% { color: #0024FF; opacity: 0.15; }
+  100% { color: #001CC3; opacity: 0.1; }
 }
 
 @keyframes gradient-background-3 {
-  0% { color: #0ea5e9; opacity: 0.1; }
-  50% { color: #2563eb; opacity: 0.15; }
-  100% { color: #7c3aed; opacity: 0.1; }
+  0% { color: #0024FF; opacity: 0.1; }
+  50% { color: #001CC3; opacity: 0.15; }
+  100% { color: #0024FF; opacity: 0.1; }
 }
 
 .animate-gradient-shift {
@@ -69,36 +69,36 @@
 }
 
 .from-gradient-1-start {
-  --tw-gradient-from: #2563eb;
+  --tw-gradient-from: #0024FF;
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(37, 99, 235, 0));
 }
 
 .via-gradient-2-start {
-  --tw-gradient-to: #7c3aed;
+  --tw-gradient-to: #001CC3;
 }
 
 .to-gradient-3-start {
-  --tw-gradient-to: #0ea5e9;
+  --tw-gradient-to: #001CC3;
 }
 
 .to-gradient-1-end {
-  --tw-gradient-to: #0ea5e9;
+  --tw-gradient-to: #001CC3;
 }
 
 .from-gradient-2-start {
-  --tw-gradient-from: #7c3aed;
+  --tw-gradient-from: #001CC3;
 }
 
 .to-gradient-2-end {
-  --tw-gradient-to: #2563eb;
+  --tw-gradient-to: #0024FF;
 }
 
 .from-gradient-3-start {
-  --tw-gradient-from: #0ea5e9;
+  --tw-gradient-from: #0024FF;
 }
 
 .to-gradient-3-end {
-  --tw-gradient-to: #7c3aed;
+  --tw-gradient-to: #001CC3;
 }
 
 .bg-clip-text {
@@ -108,4 +108,21 @@
 
 .text-transparent {
   color: transparent;
+}
+
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-horizontal {
+  animation: scroll-horizontal 40s linear infinite;
+}
+
+.animate-scroll-horizontal:hover {
+  animation-play-state: paused;
 }

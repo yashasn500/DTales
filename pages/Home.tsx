@@ -54,7 +54,16 @@ const Home: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                DTALES Tech is your expert partner in Technical Storytelling and Market Enablement, committed to transforming complex innovation into market success by providing an end-to-end ecosystem of services. We go beyond traditional documentation, offering sophisticated strategy consulting, content process management, and toolchain optimization to build resilient knowledge base systems. You can then enhance your market reach with specialized technical marketing content supported by professional creatives that articulate your value to technical buyers. Our agile approach ensures the consistent delivery of relevant, reliable product documentation and compelling market narratives, guaranteeing enhanced product understanding and experience with zero-overhead for your product and engineering teams.
+                DTALES Tech is your expert partner in Technical Storytelling and Market Enablement, committed to transforming complex innovation into market success by providing an end-to-end ecosystem of services. We go beyond traditional documentation, offering sophisticated strategy consulting, content process management, and toolchain optimization to build resilient knowledge base systems.
+              </motion.p>
+              <motion.p
+                className="text-lg md:text-xl text-gray-600 leading-relaxed mt-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                You can then enhance your market reach with specialized technical marketing content supported by professional creatives that articulate your value to technical buyers. Our agile approach ensures the consistent delivery of relevant, reliable product documentation and compelling market narratives, guaranteeing enhanced product understanding and experience with zero overhead for your product and engineering teams.
               </motion.p>
             </div>
           </motion.div>
@@ -176,118 +185,91 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Why DTALES Tech Section - Styled as Cards with Animated Icons */}
-      <section className="py-24 px-6">
-         <div className="max-w-7xl mx-auto">
-            <div className="mb-16 text-center max-w-3xl mx-auto">
-                <motion.h2
-                    className="text-4xl md:text-5xl font-bold tracking-tight text-dtales-navy mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                >
-                    Why DTALES Tech?
-                </motion.h2>
-                <motion.p
-                    className="text-xl text-gray-500"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.1 }}
-                >
-                    Reshaping the future of technical documentation.
-                </motion.p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Expertise */}
-                <motion.div
-                    className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-lg transition-all duration-300 group"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.1 }}
-                >
-                    <motion.div
-                        className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6"
-                        variants={iconVariants}
-                        whileHover="hover"
-                    >
-                        <Award size={28} />
-                    </motion.div>
-                    <h3 className="text-2xl font-bold text-black mb-4">Expertise</h3>
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                        DTALES Tech boasts a team of seasoned experts in technical documentation, UX writing, and customer enablement. We alleviate the burden on product and development teams by taking complete ownership of all product documentation tasks, from conception to execution.
-                    </p>
-                </motion.div>
-
-                {/* Customization */}
-                <motion.div
-                    className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-lg transition-all duration-300 group"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                >
-                    <motion.div
-                        className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6"
-                        variants={iconVariants}
-                        whileHover="hover"
-                    >
-                        <Sliders size={28} />
-                    </motion.div>
-                    <h3 className="text-2xl font-bold text-black mb-4">Customization</h3>
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                        We offer customized technical documentation solutions that go beyond the norm. Our tailored approach aligns content, style, and format with your product, audience, and brand. By crafting engaging user manuals and seamlessly integrating with your systems, we drive user engagement.
-                    </p>
-                </motion.div>
-
-                {/* Consolidation */}
-                <motion.div
-                    className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-lg transition-all duration-300 group"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
-                >
-                     <motion.div
-                        className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6"
-                        variants={iconVariants}
-                        whileHover="hover"
-                    >
-                        <Layers size={28} />
-                    </motion.div>
-                    <h3 className="text-2xl font-bold text-black mb-4">Consolidation</h3>
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                       We provide a comprehensive and convenient single-point solution for all your product documentation needs, streamlining your workflow and maximizing efficiency. Beyond initial deliverables, we offer ongoing support to ensure your documentation remains up-to-date.
-                    </p>
-                </motion.div>
-
-                {/* Agility */}
-                <motion.div
-                    className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-lg transition-all duration-300 group"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
-                >
-                    <motion.div
-                        className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6"
-                        variants={iconVariants}
-                        whileHover="hover"
-                    >
-                        <Zap size={28} />
-                    </motion.div>
-                    <h3 className="text-2xl font-bold text-black mb-4">Agility</h3>
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                        We understand that technology and products need to adapt and respond quickly to changing market dynamics. We use iterative processes and close collaboration to ensure continuous improvement and optimal results.
-                    </p>
-                </motion.div>
-            </div>
-         </div>
-      </section>
-
       <Testimonials />
+
+      {/* Trusted by Tomorrow's Tech Leaders Section with Horizontal Slider */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-16 text-center max-w-3xl mx-auto">
+            <motion.h2
+              className="text-4xl md:text-5xl font-bold tracking-tight text-dtales-navy mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <TextColor text="Trusted by Tomorrow's Tech Leaders" />
+            </motion.h2>
+            <motion.p
+              className="text-xl text-gray-500"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              Building the Future of Knowledge, Together
+            </motion.p>
+          </div>
+
+          {/* Horizontal Scrolling Section */}
+          <div className="relative w-full overflow-hidden">
+            <div className="flex animate-scroll-horizontal" style={{ width: '200%' }}>
+              {/* Original 8 items - duplicated for seamless loop */}
+              {[
+                { icon: 'Shield', title: 'AI Security Applications', desc: 'Simplifying complex threat protection through authoritative, trust-building narratives.' },
+                { icon: 'Network', title: 'AI Network Monitoring Tools', desc: 'Showcasing operational ROI through data-driven content and demos.' },
+                { icon: 'Code', title: 'Information Technology and Services (ITES)', desc: 'Highlighting digital transformation through strategic thought-leadership and blogs.' },
+                { icon: 'Globe', title: 'Network Consultancy and Systems Integration', desc: 'Positioning firms as the bridge to future-ready connectivity through strategic content.' },
+                { icon: 'Factory', title: 'Product Manufacturing', desc: 'Transforming technical engineering into high-impact, market-ready visual stories.' },
+                { icon: 'Box', title: 'OEM Resellers', desc: 'Differentiating resale services with agile, co-branded creative assets.' },
+                { icon: 'BarChart3', title: 'Market Research and Data Analytics', desc: 'Turning dense data into digestible, high-value executive insights.' },
+                { icon: 'Plane', title: 'Aviation', desc: 'Crafting premium narratives for high-stakes aerospace and logistics stakeholders.' },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  className="flex-shrink-0 w-96 px-8 py-10 mx-4 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <div className="flex items-start gap-3 mb-4">
+                    <span className="flex-shrink-0 w-6 h-6 rounded bg-dtales-navy/10 flex items-center justify-center text-dtales-navy text-sm font-semibold">●</span>
+                    <h3 className="text-lg font-bold text-dtales-navy">{item.title}</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm leading-relaxed pl-9">{item.desc}</p>
+                </motion.div>
+              ))}
+              
+              {/* Duplicated items for seamless loop */}
+              {[
+                { icon: 'Shield', title: 'AI Security Applications', desc: 'Simplifying complex threat protection through authoritative, trust-building narratives.' },
+                { icon: 'Network', title: 'AI Network Monitoring Tools', desc: 'Showcasing operational ROI through data-driven content and demos.' },
+                { icon: 'Code', title: 'Information Technology and Services (ITES)', desc: 'Highlighting digital transformation through strategic thought-leadership and blogs.' },
+                { icon: 'Globe', title: 'Network Consultancy and Systems Integration', desc: 'Positioning firms as the bridge to future-ready connectivity through strategic content.' },
+                { icon: 'Factory', title: 'Product Manufacturing', desc: 'Transforming technical engineering into high-impact, market-ready visual stories.' },
+                { icon: 'Box', title: 'OEM Resellers', desc: 'Differentiating resale services with agile, co-branded creative assets.' },
+                { icon: 'BarChart3', title: 'Market Research and Data Analytics', desc: 'Turning dense data into digestible, high-value executive insights.' },
+                { icon: 'Plane', title: 'Aviation', desc: 'Crafting premium narratives for high-stakes aerospace and logistics stakeholders.' },
+              ].map((item, idx) => (
+                <motion.div
+                  key={`dup-${idx}`}
+                  className="flex-shrink-0 w-96 px-8 py-10 mx-4 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <div className="flex items-start gap-3 mb-4">
+                    <span className="flex-shrink-0 w-6 h-6 rounded bg-dtales-navy/10 flex items-center justify-center text-dtales-navy text-sm font-semibold">●</span>
+                    <h3 className="text-lg font-bold text-dtales-navy">{item.title}</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm leading-relaxed pl-9">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Big CTA */}
       <section className="py-32 bg-[#F5F5F7] text-center px-6">
@@ -297,11 +279,19 @@ const Home: React.FC = () => {
              whileInView={{ scale: 1, opacity: 1 }}
              viewport={{ once: true }}
           >
-              <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">Ready to tell your story?</h2>
+              <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+                <span className="bg-gradient-to-r from-[#0024ff] to-[#001cc3] bg-[length:200%_200%] animate-gradient-shift bg-clip-text text-transparent">
+                  Ready to tell your story?
+                </span>
+              </h2>
               <p className="text-xl text-gray-500 mb-10 max-w-xl mx-auto">
-                Join the forward-thinking companies building with DTALES.
+                Where Innovation Meets Articulation. Let's Build Together.
               </p>
-              <button className="bg-dtales-navy text-white px-12 py-5 rounded-full text-xl font-semibold hover:bg-black transition-all hover:scale-105 shadow-xl">
+              <button
+                className="bg-dtales-navy text-white px-12 py-5 rounded-full text-xl font-semibold transition-all hover:scale-105 shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#001cc3]"
+                onClick={() => window.location.assign('https://dtales.tech/#/contact')}
+                aria-label="Start a Project"
+              >
                 Start a Project
               </button>
           </motion.div>
