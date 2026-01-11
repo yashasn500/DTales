@@ -22,9 +22,34 @@ const Testimonials: React.FC = () => {
     
     // Temporary fallback
     const fallbackData: Testimonial[] = [
-      { id: 7, quote: "DTALES team is exceptionally methodical in execution. We've worked with a few teams previously for our social media account, but these guys are definitely a class apart. They set the right expectations and follow through with clear, transparent communication to make sure the work gets done. Just hand it over, forget about it. It will be delivered one step above what you expect!", client: "Abilash Kokkath", company: "Trail Tribe, Dubai" },
-      { id: 8, quote: "DTALES has consistently demonstrated exceptional professionalism, a highly responsive team, and reliable service delivery. Their attention to detail and commitment to quality truly set them apart. I would confidently recommend DTALES to anyone looking for a dependable and customer-focused partner.", client: "Kiran Patil", company: "Manager (Technical Marketing), Airowire" },
-      
+      {
+        id: 7,
+        quote:
+          "DTALES team is exceptionally methodical in execution. We've worked with a few teams previously for our account, but these guys are definitely a class apart.\nThey set the right expectations and follow through with clear, transparent communication to make sure the work gets done. Just hand it over, forget about it.\nIt will be delivered one step above what you expect!",
+        client: "Abilash Kokkath",
+        company: "Trail Tribe, Dubai",
+      },
+      {
+        id: 8,
+        quote:
+          "DTALES has consistently demonstrated exceptional professionalism, a highly responsive team, and reliable service delivery. Their attention to detail and commitment to quality truly set them apart. I would confidently recommend DTALES to anyone looking for a dependable and customer-focused partner.",
+        client: "Kiran Patil",
+        company: "Manager (Technical Marketing), Airowire",
+      },
+      {
+        id: 9,
+        quote:
+          "DTALES Tech is our extended team for all things, Content. I can't imagine how we would operate without them! I highly recommend their services to any company looking to improve their Tech Content game.",
+        client: "Akshay Balaganur",
+        company: "CEO, LinkEye",
+      },
+      {
+        id: 10,
+        quote:
+          "DTALES Tech is truly the extension of our team we didn't know we needed. Handing over our tech documentation services to them was the best strategic move we made this year. They are proactive, professional, and understand our product as deeply as we do. If you want to free up your team to do what they do best, give the content to DTALES.",
+        client: "Sona Sreenivasan",
+        company: "Serial Entrepreneur | Tech Investor, Bangalore",
+      },
     ];
     setTestimonials(fallbackData);
     setLoading(false);
