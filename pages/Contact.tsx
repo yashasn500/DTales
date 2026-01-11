@@ -35,8 +35,8 @@ const Contact: React.FC = () => {
 
     try {
       await emailjs.send(
-        "service_821qm4m",
-        "template_itoz1fo",
+        "service_ckx3lf6",
+        "template_8ibb1c8",
         {
           first_name: formData.firstName,
           last_name: formData.lastName,
@@ -44,7 +44,7 @@ const Contact: React.FC = () => {
           preferred_date: formData.preferredDate,
           message: formData.message,
         },
-        "d_raO-6LQsDm9DAcp"
+        "T-0FLg8SvqJCRaClP"
       );
 
       setSuccessMsg("Message sent successfully!");
