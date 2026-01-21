@@ -3,37 +3,6 @@ const { getSupabase } = require("../config/supabase");
 
 const router = Router();
 
-function generateSlug(title) {
-  if (!title) return "untitled";
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-async function slugExists(supabase, slug, excludeId = null) {
-  let query = supabase.from("blogs").select("id").eq("slug", slug);
-  if (excludeId) {
-    query = query.neq("id", excludeId);
-  }
-  const { data, error } = await query;
-  if (error) throw error;
-  return Array.isArray(data) && data.length > 0;
-}
-
-async function ensureUniqueSlug(supabase, baseSlug, excludeId = null) {
-  const root = baseSlug || "untitled";
-  let slug = root;
-  let counter = 1;
-  while (await slugExists(supabase, slug, excludeId)) {
-    slug = `${root}-${counter}`;
-    counter += 1;
-  }
-  return slug;
-}
-
 function stripHtml(html) {
   if (!html) return "";
   return String(html).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -135,7 +104,6 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Content HTML is required" });
     }
 
-    const uniqueSlug = await ensureUniqueSlug(supabase, generateSlug(title));
     const excerpt = buildExcerpt(contentHtml, 200);
 
     const { data, error } = await supabase
@@ -143,7 +111,6 @@ router.post("/", async (req, res) => {
       .insert([
         {
           title,
-          slug: uniqueSlug,
           excerpt,
           content: contentHtml,
           cover_image: coverImage,
@@ -194,13 +161,11 @@ router.put("/:id", async (req, res) => {
     }
 
     const excerpt = buildExcerpt(contentHtml, 200);
-    const slugToUse = current.slug || (await ensureUniqueSlug(supabase, generateSlug(title), req.params.id));
 
     const { data, error } = await supabase
       .from("blogs")
       .update({
         title,
-        slug: slugToUse,
         excerpt,
         content: contentHtml,
         cover_image: coverImage ?? current.cover_image ?? null,
