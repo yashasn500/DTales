@@ -8,14 +8,14 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post("/image", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No image provided" });
+      return res.status(400).json({ error: "No image file" });
     }
 
-    const fileName = `images/${Date.now()}-${req.file.originalname}`;
+    const filePath = `images/${Date.now()}-${req.file.originalname}`;
 
     const { error } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET)
-      .upload(fileName, req.file.buffer, {
+      .upload(filePath, req.file.buffer, {
         contentType: req.file.mimetype,
       });
 
@@ -23,7 +23,7 @@ router.post("/image", upload.single("file"), async (req, res) => {
 
     const { data } = supabase.storage
       .from(process.env.SUPABASE_BUCKET)
-      .getPublicUrl(fileName);
+      .getPublicUrl(filePath);
 
     res.json({ url: data.publicUrl });
   } catch (err) {
@@ -35,14 +35,14 @@ router.post("/image", upload.single("file"), async (req, res) => {
 router.post("/docx", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No document provided" });
+      return res.status(400).json({ error: "No docx file" });
     }
 
-    const fileName = `docs/${Date.now()}-${req.file.originalname}`;
+    const filePath = `docs/${Date.now()}-${req.file.originalname}`;
 
     const { error } = await supabase.storage
       .from(process.env.SUPABASE_BUCKET)
-      .upload(fileName, req.file.buffer, {
+      .upload(filePath, req.file.buffer, {
         contentType: req.file.mimetype,
       });
 
@@ -50,14 +50,13 @@ router.post("/docx", upload.single("file"), async (req, res) => {
 
     const { data } = supabase.storage
       .from(process.env.SUPABASE_BUCKET)
-      .getPublicUrl(fileName);
+      .getPublicUrl(filePath);
 
     res.json({ url: data.publicUrl });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Doc upload failed" });
+    res.status(500).json({ error: "Docx upload failed" });
   }
 });
 
 export default router;
-
