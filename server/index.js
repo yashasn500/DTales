@@ -1,10 +1,10 @@
-require("dotenv").config();
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
 
-const express = require("express");
-const cors = require("cors");
-
-const blogsRouter = require("./routes/blogs");
-const caseStudiesRouter = require("./routes/case-studies");
+import blogsRouter from "./routes/blogs.js";
+import caseStudiesRouter from "./routes/case-studies.js";
+import uploadsRouter from "./routes/uploads.js";
 
 const app = express();
 
@@ -17,6 +17,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/blogs", blogsRouter);
 app.use("/api/case-studies", caseStudiesRouter);
+app.use("/api/uploads", uploadsRouter); // ✅ THIS FIXES IT
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
