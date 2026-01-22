@@ -3,7 +3,7 @@
  * Used consistently across all admin editors (Blogs, Case Studies).
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://dtales-backend.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://dtales-backend.onrender.com";
 
 /**
  * Upload an image to Supabase Storage via the backend.
