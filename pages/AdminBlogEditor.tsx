@@ -5,6 +5,34 @@ import { Upload, X } from "lucide-react";
 import { apiFetch, apiPost, apiPut } from "../src/lib/api";
 import { uploadImage as uploadImageHelper, uploadDocx } from "../src/lib/uploads";
 
+async function compressImage(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d")!;
+
+    img.onload = () => {
+      const maxWidth = 1200;
+      const scale = Math.min(maxWidth / img.width, 1);
+
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          resolve(new File([blob!], file.name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        0.7
+      );
+    };
+
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 const AdminBlogEditor: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -45,7 +73,8 @@ const AdminBlogEditor: React.FC = () => {
     setError(null);
     setUploadingImage(true);
     try {
-      const url = await uploadImageHelper(file);
+      const compressed = await compressImage(file);
+      const url = await uploadImageHelper(compressed);
       if (url) {
         setCoverUrl(url);
       }
@@ -64,9 +93,10 @@ const AdminBlogEditor: React.FC = () => {
 
     try {
       const html = await uploadDocx(file);
-      if (html) {
+      if (html && html.trim()) {
         setDocxContent(html);
       } else {
+        setError("Failed to process .docx file: no content returned");
         setContentFile(null);
       }
     } catch (err: any) {
