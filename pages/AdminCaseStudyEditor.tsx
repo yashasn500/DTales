@@ -143,7 +143,7 @@ const AdminCaseStudyEditor: React.FC = () => {
       };
 
       if (docxUrl) {
-        payload.content = docxUrl;
+        payload.content = { html: docxUrl };
       }
 
       if (isEdit && id) {
@@ -181,7 +181,7 @@ const AdminCaseStudyEditor: React.FC = () => {
       };
 
       if (docxUrl) {
-        payload.content = docxUrl;
+        payload.content = { html: docxUrl };
       }
 
       if (isEdit && id) {
