@@ -2,6 +2,34 @@ import { useEffect, useState } from "react";
 import { uploadImage, uploadDocx } from "../src/lib/uploads";
 import { API_BASE_URL } from "../constants";
 
+async function compressImage(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d")!;
+
+    img.onload = () => {
+      const maxWidth = 1200;
+      const scale = Math.min(maxWidth / img.width, 1);
+
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          resolve(new File([blob!], file.name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        0.7
+      );
+    };
+
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 export default function AdminBlogEditor() {
   const [title, setTitle] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
@@ -21,7 +49,8 @@ export default function AdminBlogEditor() {
     setError(null);
     setLoading(true);
     try {
-      const url = await uploadImage(file);
+      const compressed = await compressImage(file);
+      const url = await uploadImage(compressed);
       setCoverImageUrl(url);
       setError(null);
     } catch (err) {
