@@ -115,20 +115,20 @@ const AdminBlogEditor: React.FC = () => {
         return;
       }
 
+      if (!isEdit && !docxContent) {
+        setError("Please upload a .docx file with your content");
+        setSaving(false);
+        return;
+      }
+
       const payload: any = {
         title: title.trim(),
         cover_image_url: coverUrl,
         published: false,
       };
 
-      // Only include content if we already converted a .docx file
       if (docxContent) {
-        payload.content = docxContent; // Plain HTML string, NOT { html: ... }
-      } else if (!isEdit) {
-        // For new blogs, content is required
-        setError("Please upload a .docx file with your content");
-        setSaving(false);
-        return;
+        payload.content = docxContent;
       }
 
       if (isEdit && id) {
@@ -153,20 +153,20 @@ const AdminBlogEditor: React.FC = () => {
         return;
       }
 
+      if (!isEdit && !docxContent) {
+        setError("Please upload a .docx file with your content");
+        setSaving(false);
+        return;
+      }
+
       const payload: any = {
         title: title.trim(),
         cover_image_url: coverUrl,
         published: true,
       };
 
-      // Only include content if we already converted a .docx file
       if (docxContent) {
-        payload.content = docxContent; // Plain HTML string, NOT { html: ... }
-      } else if (!isEdit) {
-        // For new blogs, content is required
-        setError("Please upload a .docx file with your content");
-        setSaving(false);
-        return;
+        payload.content = docxContent;
       }
 
       if (isEdit && id) {
