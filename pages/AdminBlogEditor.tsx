@@ -1,311 +1,137 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { useNavigate, useParams } from "react-router-dom";
-import { Upload, X } from "lucide-react";
-import { apiFetch, apiPost, apiPut } from "../src/lib/api";
-import { uploadImage as uploadImageHelper, uploadDocx } from "../src/lib/uploads";
+import { useState } from "react";
+import { uploadImage, uploadDocx } from "../lib/uploads";
+import { API_BASE_URL } from "../constants";
 
-async function compressImage(file: File): Promise<File> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d")!;
-
-    img.onload = () => {
-      const maxWidth = 1200;
-      const scale = Math.min(maxWidth / img.width, 1);
-
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      canvas.toBlob(
-        (blob) => {
-          resolve(new File([blob!], file.name, { type: "image/jpeg" }));
-        },
-        "image/jpeg",
-        0.7
-      );
-    };
-
-    img.src = URL.createObjectURL(file);
-  });
-}
-
-const AdminBlogEditor: React.FC = () => {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const isEdit = Boolean(id);
-
+export default function AdminBlogEditor() {
   const [title, setTitle] = useState("");
-  const [coverUrl, setCoverUrl] = useState("");
-  const [contentFile, setContentFile] = useState<File | null>(null);
-  const [docxContent, setDocxContent] = useState<string>("");
-  const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  const [docxUrl, setDocxUrl] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(isEdit);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const docxInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isEdit) return;
-
-    const loadBlog = async () => {
-      try {
-        const data = await apiFetch<{ title: string; slug: string; cover_image_url?: string | null }>(`/api/blogs/${id}`);
-
-        setTitle(data.title || "");
-        setCoverUrl(data.cover_image_url || "");
-        setDocxContent((data as any)?.content || "");
-      } catch (err: any) {
-        setError(err.message || "Failed to load blog");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBlog();
-  }, [id, isEdit]);
-
-  const handleCoverImageUpload = async (file: File | null) => {
-    if (!file) return;
+  // ---------------- IMAGE UPLOAD ----------------
+  async function handleImageUpload(file: File) {
     setError(null);
-    setUploadingImage(true);
+    setLoading(true);
     try {
-      const compressed = await compressImage(file);
-      const url = await uploadImageHelper(compressed);
-      if (url) {
-        setCoverUrl(url);
-      }
-    } catch (err: any) {
-      setError(err.message || "Failed to upload image");
+      const url = await uploadImage(file);
+      setCoverImageUrl(url);
+    } catch (err) {
+      setError("Image upload failed");
     } finally {
-      setUploadingImage(false);
+      setLoading(false);
     }
-  };
+  }
 
-  const handleDocxFileChange = async (file: File | null) => {
-    if (!file) return;
+  // ---------------- DOCX UPLOAD ----------------
+  async function handleDocxUpload(file: File) {
     setError(null);
-    setContentFile(file);
-    setDocxContent("");
-
+    setLoading(true);
     try {
-      const url = await uploadDocx(file);
-      setDocxContent(url || "");
-      if (!url || !url.trim()) {
-        setError("Failed to process .docx file: no URL returned");
-        setContentFile(null);
-      }
-    } catch (err: any) {
-      setError(err.message || "Failed to process .docx file");
-      setContentFile(null);
-    }
-  };
-
-  const handleSaveDraft = async () => {
-    setSaving(true);
-    setError(null);
-    try {
-      if (!title.trim()) {
-        setError("Title is required");
-        setSaving(false);
-        return;
-      }
-
-      if (!docxContent) {
-        setError("Please upload a .docx file with your content");
-        setSaving(false);
-        return;
-      }
-
-      const payload: any = {
-        title: title.trim(),
-        cover_image_url: coverUrl,
-        published: false,
-      };
-
-      payload.content = docxContent;
-
-      if (isEdit && id) {
-        await apiPut(`/api/blogs/${id}`, payload);
-      } else {
-        await apiPost("/api/blogs", payload);
-      }
-    } catch (e: any) {
-      setError(e.message || "An unexpected error occurred");
+      const url = await uploadDocx(file); // backend returns { url }
+      setDocxUrl(url); // ✅ THIS WAS MISSING BEFORE
+    } catch (err) {
+      setError("DOCX upload failed");
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
-  };
+  }
 
-  const handlePublish = async () => {
-    setSaving(true);
+  // ---------------- PUBLISH ----------------
+  async function handlePublish() {
     setError(null);
-    try {
-      if (!title.trim()) {
-        setError("Title is required");
-        setSaving(false);
-        return;
-      }
 
-      if (!docxContent) {
-        setError("Please upload a .docx file with your content");
-        setSaving(false);
-        return;
-      }
-
-      const payload: any = {
-        title: title.trim(),
-        cover_image_url: coverUrl,
-        published: true,
-      };
-
-      payload.content = docxContent;
-
-      if (isEdit && id) {
-        await apiPut(`/api/blogs/${id}`, payload);
-      } else {
-        await apiPost("/api/blogs", payload);
-      }
-      
-      navigate("/admin/dashboard");
-    } catch (e: any) {
-      setError(e.message || "An unexpected error occurred");
-    } finally {
-      setSaving(false);
+    if (!title.trim()) {
+      setError("Title is required");
+      return;
     }
-  };
+
+    if (!docxUrl) {
+      setError("Please upload a .docx file with your content");
+      return;
+    }
+
+    if (!coverImageUrl) {
+      setError("Please upload a cover image");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/api/blogs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          coverImage: coverImageUrl,
+          docxUrl,
+          status: "published",
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to publish blog");
+
+      window.location.href = "/#/admin/blogs";
+    } catch (err) {
+      setError("Failed to publish blog");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 pt-28 pb-16 px-4">
-      <div className="max-w-5xl mx-auto">
-        <motion.h1 className="text-3xl font-bold text-white mb-6">
-          {isEdit ? "Edit Blog" : "New Blog"}
-        </motion.h1>
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">New Blog</h1>
 
-        {loading && (
-          <div className="mb-4 p-4 rounded-xl bg-white/5 border border-white/10 text-gray-200 text-center">
-            Loading blog…
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <input
-            className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white md:col-span-2"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          
-          {/* Cover Image Upload */}
-          <div className="md:col-span-2">
-            <label className="block text-sm text-gray-300 mb-2">Cover Image</label>
-            <div className="flex gap-3 items-center">
-              <button
-                type="button"
-                onClick={() => coverInputRef.current?.click()}
-                disabled={uploadingImage}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-4 py-3 rounded-xl font-semibold transition"
-              >
-                <Upload size={18} />
-                {uploadingImage ? "Uploading..." : "Choose Image"}
-              </button>
-              {coverUrl && (
-                <div className="flex-1 flex items-center gap-3">
-                  <img src={coverUrl} alt="Cover preview" className="h-12 w-12 object-cover rounded-lg" />
-                  <button
-                    type="button"
-                    onClick={() => setCoverUrl("")}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              )}
-            </div>
-            <input
-              ref={coverInputRef}
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleCoverImageUpload(e.target.files?.[0] || null)}
-              className="hidden"
-            />
-          </div>
-
-          {/* Content File Upload (.docx) */}
-          <div className="md:col-span-2">
-            <label className="block text-sm text-gray-300 mb-2">
-              Upload Content (.docx from Google Docs)
-            </label>
-            <div className="flex gap-3 items-center">
-              <button
-                type="button"
-                onClick={() => docxInputRef.current?.click()}
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl font-semibold transition"
-              >
-                <Upload size={18} />
-                Choose .docx File
-              </button>
-              {contentFile && (
-                <div className="flex-1 flex items-center gap-3">
-                  <span className="text-gray-300">{contentFile.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setContentFile(null);
-                      setDocxContent(null);
-                    }}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              )}
-            </div>
-            <input
-              ref={docxInputRef}
-              type="file"
-              accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              onChange={(e) => handleDocxFileChange(e.target.files?.[0] || null)}
-              className="hidden"
-            />
-            {isEdit && !contentFile && (
-              <p className="text-xs text-gray-400 mt-2">
-                Leave empty to keep existing content
-              </p>
-            )}
-          </div>
+      {error && (
+        <div className="bg-red-900/40 text-red-200 px-4 py-2 rounded mb-4">
+          {error}
         </div>
+      )}
 
-        <div className="mt-6 flex gap-4 justify-end">
-          <button
-            onClick={handleSaveDraft}
-            disabled={saving}
-            className="px-6 py-3 rounded-xl bg-white/10 border border-white/10 text-white font-semibold hover:bg-white/20 disabled:opacity-60 transition-all"
-          >
-            {saving ? "Saving…" : "Save Draft"}
-          </button>
-          <button
-            onClick={handlePublish}
-            disabled={saving}
-            className="px-6 py-3 rounded-xl bg-[#0020BF] text-white font-semibold hover:bg-[#0A2CFF] disabled:opacity-60 transition-all"
-          >
-            {saving ? "Publishing…" : "Publish"}
-          </button>
-        </div>
+      <input
+        className="w-full mb-4 p-3 rounded bg-gray-800"
+        placeholder="Blog title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+
+      {/* IMAGE */}
+      <div className="mb-4">
+        <label className="block mb-2">Cover Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => e.target.files && handleImageUpload(e.target.files[0])}
+        />
+        {coverImageUrl && (
+          <img src={coverImageUrl} className="mt-2 w-32 rounded" />
+        )}
       </div>
+
+      {/* DOCX */}
+      <div className="mb-6">
+        <label className="block mb-2">Upload Content (.docx)</label>
+        <input
+          type="file"
+          accept=".docx"
+          onChange={(e) => e.target.files && handleDocxUpload(e.target.files[0])}
+        />
+        {docxUrl && (
+          <p className="text-green-400 mt-1">DOCX uploaded successfully</p>
+        )}
+      </div>
+
+      <button
+        onClick={handlePublish}
+        disabled={loading}
+        className="bg-blue-600 px-6 py-2 rounded"
+      >
+        {loading ? "Publishing..." : "Publish"}
+      </button>
     </div>
   );
-};
+}
 
-export default AdminBlogEditor;
 
