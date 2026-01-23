@@ -71,9 +71,9 @@ export default function AdminBlogEditor() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
-          coverImage: coverImageUrl,
-          content: docxUrl,
-          status: "published",
+          cover_image_url: coverImageUrl,
+          content: { html: docxUrl },
+          published: true,
         }),
       });
 
