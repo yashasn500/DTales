@@ -79,7 +79,7 @@ export default function AdminBlogEditor() {
 
       if (!res.ok) throw new Error("Failed to publish blog");
 
-      window.location.href = "/#/admin/blogs";
+      window.location.href = "/#/admin/dashboard";
     } catch (err) {
       setError("Failed to publish blog");
     } finally {

@@ -71,6 +71,18 @@ const AdminCaseStudyEditor: React.FC = () => {
     loadCaseStudy();
   }, [id, isEdit]);
 
+  useEffect(() => {
+    if (docxContent) {
+      setError(null);
+    }
+  }, [docxContent]);
+
+  useEffect(() => {
+    if (coverImageUrl) {
+      setError(null);
+    }
+  }, [coverImageUrl]);
+
   const handleCoverImageUpload = async (file: File | null) => {
     if (!file) return;
     setError(null);
