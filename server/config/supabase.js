@@ -1,25 +1,10 @@
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
 
-let supabase = null;
-
-function getSupabase() {
-  if (supabase) return supabase;
-
-  const url = process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !serviceKey) {
-    throw new Error("❌ Supabase env vars missing");
-  }
-
-  supabase = createClient(url, serviceKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  });
-
-  return supabase;
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  throw new Error("Missing Supabase environment variables");
 }
 
-module.exports = { getSupabase };
+export const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);

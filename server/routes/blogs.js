@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const { getSupabase } = require("../config/supabase");
+import { Router } from "express";
+import { supabase } from "../config/supabase.js";
 
 const router = Router();
 
@@ -28,7 +28,6 @@ function mapBlog(row) {
 
 router.get("/", async (_req, res) => {
   try {
-    const supabase = getSupabase();
     const { data, error } = await supabase
       .from("blogs")
       .select("*")
@@ -44,7 +43,6 @@ router.get("/", async (_req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { data, error } = await supabase
       .from("blogs")
       .select("*")
@@ -67,7 +65,6 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const supabase = getSupabase();
     const title = (req.body.title || "").toString().trim();
     const content = extractContent(req.body.content);
     const cover_image = req.body.cover_image ?? null;
@@ -107,7 +104,6 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const supabase = getSupabase();
 
     const { data: current, error: fetchError } = await supabase
       .from("blogs")
@@ -163,7 +159,6 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const supabase = getSupabase();
     const { data, error } = await supabase
       .from("blogs")
       .delete()
@@ -182,5 +177,5 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
