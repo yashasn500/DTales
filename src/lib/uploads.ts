@@ -66,5 +66,5 @@ export async function uploadDocx(file: File): Promise<string> {
   }
 
   const data = await res.json();
-  return data.html as string;
+  return data.url as string;
 }

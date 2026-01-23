@@ -95,11 +95,11 @@ const AdminCaseStudyEditor: React.FC = () => {
     setDocxContent(null);
 
     try {
-      const html = await uploadDocx(file);
-      if (html && html.trim()) {
-        setDocxContent(html);
+      const url = await uploadDocx(file);
+      if (url && url.trim()) {
+        setDocxContent(url);
       } else {
-        setError("Failed to process .docx file: no content returned");
+        setError("Failed to process .docx file: no URL returned");
         setContentFile(null);
       }
     } catch (err: any) {
