@@ -34,7 +34,8 @@ async function convertDocxUrlToHtml(url) {
     }
 
     // Convert to HTML using mammoth
-    const result = await mammoth.convertToHtml({ arrayBuffer: data.arrayBuffer() });
+    const buffer = Buffer.from(await data.arrayBuffer());
+    const result = await mammoth.convertToHtml({ buffer });
     return result.value; // Return HTML string
   } catch (err) {
     throw new Error(`DOCX conversion error: ${err.message}`);
