@@ -30,16 +30,18 @@ function normalizeBlog(row) {
   // Normalize cover image field
   const cover_image_url = row?.cover_image_url ?? row?.cover_image ?? null;
   
-  // Normalize content: if it's a URL (DOCX), return empty string, otherwise return as-is
-  let content = row?.content ?? "";
-  if (typeof content === "string" && content.startsWith("http")) {
-    content = "";
-  }
+  // Return content as-is (HTML from database)
+  const content = row?.content ?? "";
   
   return {
-    ...row,
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
     cover_image_url,
     content,
+    published: row.published,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
   };
 }
 
