@@ -14,13 +14,13 @@ function buildExcerpt(html, maxLen = 200) {
 }
 
 function extractContent(bodyContent) {
-  // Handle { html: "..." } format from frontend
-  if (bodyContent && typeof bodyContent === "object" && typeof bodyContent.html === "string") {
-    return bodyContent.html;
-  }
-  // Handle plain string
+  // Content should be a plain string from frontend
   if (typeof bodyContent === "string") {
     return bodyContent;
+  }
+  // LEGACY: Handle { html: "..." } format from older frontend
+  if (bodyContent && typeof bodyContent === "object" && typeof bodyContent.html === "string") {
+    return bodyContent.html;
   }
   return "";
 }
@@ -112,21 +112,29 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
+    console.log("POST /case-studies - Request body:", JSON.stringify(req.body, null, 2));
+    
     const title = (req.body.title || "").toString().trim();
     const content = extractContent(req.body.content);
     const cover_image_url = req.body.cover_image_url ?? null;
     const published = req.body.published === true;
 
+    console.log("Extracted values:", { title, contentLength: content.length, cover_image_url, published });
+
     // Validation
     if (!title) {
+      console.error("Validation failed: Title is empty");
       return res.status(400).json({ error: "Title is required" });
     }
 
     if (!content || typeof content !== "string" || !content.trim()) {
+      console.error("Validation failed: Content invalid", { contentType: typeof content, contentLength: content?.length });
       return res.status(400).json({ error: "Content is required (must be HTML string)" });
     }
 
     const excerpt = buildExcerpt(content, 200);
+
+    console.log("Inserting into Supabase:", { title, excerpt, contentLength: content.length, cover_image_url, published });
 
     const { data, error } = await supabase
       .from("case_studies")
@@ -142,17 +150,23 @@ router.post("/", async (req, res) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase insert error:", error);
+      throw error;
+    }
 
+    console.log("Case study created successfully:", data.id);
     res.status(201).json(normalizeCaseStudy(data));
   } catch (err) {
-    console.error("POST /case-studies error:", err);
-    return res.status(500).json({ error: "Failed to create case study" });
+    console.error("POST /case-studies error:", err.message, err);
+    return res.status(500).json({ error: "Failed to create case study", details: err.message });
   }
 });
 
 router.put("/:id", async (req, res) => {
   try {
+    console.log("PUT /case-studies/:id - Request body:", JSON.stringify(req.body, null, 2));
+    
     const { data: current, error: fetchError } = await supabase
       .from("case_studies")
       .select("*")
@@ -173,6 +187,8 @@ router.put("/:id", async (req, res) => {
     const cover_image_url = req.body.cover_image_url !== undefined ? req.body.cover_image_url : current.cover_image_url ?? null;
     const published = typeof req.body.published === "boolean" ? req.body.published : current.published === true;
 
+    console.log("Extracted values:", { title, contentLength: content.length, cover_image_url, published });
+
     // Validation
     if (!title) {
       return res.status(400).json({ error: "Title is required" });
@@ -183,6 +199,8 @@ router.put("/:id", async (req, res) => {
     }
 
     const excerpt = buildExcerpt(content, 200);
+
+    console.log("Updating in Supabase:", { title, excerpt, contentLength: content.length, cover_image_url, published });
 
     const { data, error } = await supabase
       .from("case_studies")
@@ -198,12 +216,16 @@ router.put("/:id", async (req, res) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase update error:", error);
+      throw error;
+    }
 
+    console.log("Case study updated successfully:", data.id);
     res.json(normalizeCaseStudy(data));
   } catch (err) {
-    console.error("PUT /case-studies/:id error:", err);
-    return res.status(500).json({ error: "Failed to update case study" });
+    console.error("PUT /case-studies/:id error:", err.message, err);
+    return res.status(500).json({ error: "Failed to update case study", details: err.message });
   }
 });
 

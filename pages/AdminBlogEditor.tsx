@@ -100,22 +100,33 @@ export default function AdminBlogEditor() {
 
     try {
       setLoading(true);
+      
+      const payload = {
+        title,
+        cover_image_url: coverImageUrl,
+        content: htmlContent,
+        published: true,
+      };
+      
+      console.log("Publishing blog with payload:", JSON.stringify(payload, null, 2));
+      
       const res = await fetch(`${API_BASE_URL}/api/blogs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          cover_image_url: coverImageUrl,
-          content: { html: htmlContent },
-          published: true,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Failed to publish blog");
+      const responseData = await res.json();
+      console.log("Publish response:", res.status, responseData);
+
+      if (!res.ok) {
+        throw new Error(responseData?.details || responseData?.error || "Failed to publish blog");
+      }
 
       window.location.href = "/#/admin/dashboard";
-    } catch (err) {
-      setError("Failed to publish blog");
+    } catch (err: any) {
+      console.error("Publish error:", err);
+      setError(err.message || "Failed to publish blog");
     } finally {
       setLoading(false);
     }

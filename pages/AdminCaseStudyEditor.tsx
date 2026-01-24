@@ -139,7 +139,7 @@ const AdminCaseStudyEditor: React.FC = () => {
       };
 
       if (htmlContent) {
-        payload.content = { html: htmlContent };
+        payload.content = htmlContent;
       }
 
       if (isEdit && id) {
@@ -177,8 +177,10 @@ const AdminCaseStudyEditor: React.FC = () => {
       };
 
       if (htmlContent) {
-        payload.content = { html: htmlContent };
+        payload.content = htmlContent;
       }
+
+      console.log("Publishing case study with payload:", JSON.stringify(payload, null, 2));
 
       if (isEdit && id) {
         await apiPut(`/api/case-studies/${id}`, payload);
@@ -188,6 +190,7 @@ const AdminCaseStudyEditor: React.FC = () => {
 
       navigate("/admin/dashboard");
     } catch (e: any) {
+      console.error("Publish error:", e);
       setError(e.message || "An unexpected error occurred");
     } finally {
       setSaving(false);
