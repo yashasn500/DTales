@@ -87,20 +87,24 @@ const BlogDetails: React.FC = () => {
             <CoverImage src={blog.cover_image_url} alt={blog.title} />
 
             {/* Content */}
-            <div
-              className="prose prose-lg max-w-none
-                prose-headings:font-bold prose-headings:text-black prose-headings:tracking-tight
-                prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
-                prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-lg
-                prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-                prose-strong:text-black prose-strong:font-bold
-                prose-ul:text-gray-700 prose-ol:text-gray-700
-                prose-li:text-gray-700 prose-li:leading-relaxed
-                prose-img:rounded-2xl prose-img:shadow-md
-                prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-2 prose-code:py-1 prose-code:rounded
-                prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-2xl"
-                dangerouslySetInnerHTML={{ __html: blog.content || "" }}
-            />
+            {blog.content ? (
+              <div
+                className="prose prose-lg max-w-none
+                  prose-headings:font-bold prose-headings:text-black prose-headings:tracking-tight
+                  prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+                  prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-lg
+                  prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-black prose-strong:font-bold
+                  prose-ul:text-gray-700 prose-ol:text-gray-700
+                  prose-li:text-gray-700 prose-li:leading-relaxed
+                  prose-img:rounded-2xl prose-img:shadow-md
+                  prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-2 prose-code:py-1 prose-code:rounded
+                  prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-2xl"
+                  dangerouslySetInnerHTML={{ __html: blog.content }}
+              />
+            ) : (
+              <p className="text-gray-500 text-center py-8">No content available.</p>
+            )}
           </motion.article>
         )}
       </div>
