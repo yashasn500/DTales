@@ -78,7 +78,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
           <div className="mt-auto flex items-center justify-between text-sm text-gray-500">
             {formattedDate ? <span>{formattedDate}</span> : <span>—</span>}
             <span className="inline-flex items-center gap-1 font-semibold text-[#0020BF] transition-all duration-150 group-hover:gap-2">
-              Read more ->
+              Read more &rarr;
             </span>
           </div>
         </div>
