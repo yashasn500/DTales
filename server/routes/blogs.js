@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { supabase } from "../config/supabase.js";
-import mammoth from "mammoth";
+const mammoth = require("mammoth");
 
 const router = Router();
 
@@ -184,6 +184,10 @@ router.post("/", async (req, res) => {
   try {
     const title = (req.body.title || "").toString().trim();
     let content = extractContent(req.body.content);
+    if (req.file && req.file.buffer) {
+      const result = await mammoth.convertToHtml({ buffer: req.file.buffer });
+      content = result.value;
+    }
     const cover_image_url = req.body.cover_image_url ?? null;
     const published = req.body.published === true;
 
@@ -193,18 +197,6 @@ router.post("/", async (req, res) => {
 
     if (!content) {
       return res.status(400).json({ error: "Content is required" });
-    }
-
-    // Convert DOCX URL to HTML if needed
-    if (typeof content === "string" && content.includes("supabase") && content.includes(".docx")) {
-      try {
-        console.log("Converting DOCX to HTML:", content);
-        content = await convertDocxUrlToHtml(content);
-        console.log("Conversion successful, content length:", content.length);
-      } catch (err) {
-        console.error("DOCX conversion error:", err);
-        return res.status(500).json({ error: "Failed to convert DOCX to HTML" });
-      }
     }
 
     const excerpt = buildExcerpt(content, 200);
@@ -251,6 +243,10 @@ router.put("/:id", async (req, res) => {
     const title = ((req.body.title ?? current.title) || "").toString().trim();
     const contentRaw = extractContent(req.body.content);
     let content = contentRaw !== "" ? contentRaw : current.content || "";
+    if (req.file && req.file.buffer) {
+      const result = await mammoth.convertToHtml({ buffer: req.file.buffer });
+      content = result.value;
+    }
     const cover_image_url = req.body.cover_image_url !== undefined ? req.body.cover_image_url : current.cover_image_url ?? null;
     const published = typeof req.body.published === "boolean" ? req.body.published : current.published === true;
 
@@ -260,18 +256,6 @@ router.put("/:id", async (req, res) => {
 
     if (!content) {
       return res.status(400).json({ error: "Content is required" });
-    }
-
-    // Convert DOCX URL to HTML if needed
-    if (typeof content === "string" && content.includes("supabase") && content.includes(".docx")) {
-      try {
-        console.log("Converting DOCX to HTML:", content);
-        content = await convertDocxUrlToHtml(content);
-        console.log("Conversion successful, content length:", content.length);
-      } catch (err) {
-        console.error("DOCX conversion error:", err);
-        return res.status(500).json({ error: "Failed to convert DOCX to HTML" });
-      }
     }
 
     const excerpt = buildExcerpt(content, 200);
