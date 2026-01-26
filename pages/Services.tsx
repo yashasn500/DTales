@@ -15,7 +15,7 @@ import {
 
 const Services: React.FC = () => {
   return (
-    <div className="pt-24 min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Header with Background Image */}
       <section className="relative py-40 text-center px-6 overflow-hidden">
         {/* Background Image */}
